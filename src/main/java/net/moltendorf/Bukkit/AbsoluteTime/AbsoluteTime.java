@@ -1,5 +1,6 @@
 package net.moltendorf.Bukkit.AbsoluteTime;
 
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,7 +25,13 @@ public class AbsoluteTime extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 
-		getServer().getScheduler().runTaskTimer(this, () -> ++ticks, 1L, 1L);
+		saveDefaultConfig();
+
+		final Server server = getServer();
+
+		ticks = getConfig().getLong("ticks");
+		getLogger().info("Resuming from tick: " + Long.toString(ticks) + ".");
+		server.getScheduler().runTaskTimer(this, () -> ++ticks, 1L, 1L);
 
 		for (final World world : getServer().getWorlds()) {
 			worlds.put(world.getUID(), new WorldEntry(world));
@@ -33,12 +40,17 @@ public class AbsoluteTime extends JavaPlugin {
 		checkRunnable = new CheckRunnable();
 		checkRunnable.schedule();
 
-		getServer().getPluginManager().registerEvents(new Listeners(), this);
+		server.getPluginManager().registerEvents(new Listeners(), this);
 	}
 
 	@Override
 	public void onDisable() {
 		instance = null;
+
+		getConfig().set("ticks", ++ticks);
+		saveConfig();
+
+		getLogger().info("Saved tick count to config: " + ticks + ".");
 	}
 
 	/**	 * @return ticks since server start
