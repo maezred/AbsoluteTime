@@ -53,8 +53,9 @@ public class AbsoluteTime extends JavaPlugin {
 		getLogger().info("Saved tick count to config: " + ticks + ".");
 	}
 
-	/**	 * @return ticks since server start
-		 */
+	/**
+	 * @return ticks
+	 */
 	public long getTicks() {
 		return ticks;
 	}
