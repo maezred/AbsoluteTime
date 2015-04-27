@@ -1,6 +1,5 @@
 package net.moltendorf.Bukkit.AbsoluteTime;
 
-import net.moltendorf.Bukkit.AbsoluteTime.event.WorldChangedTimeEvent;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -16,9 +15,7 @@ public class CheckRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		final AbsoluteTime plugin = AbsoluteTime.instance;
-
-		for (final Iterator<WorldEntry> iterator = plugin.worlds.values().iterator(); iterator.hasNext(); ) {
+		for (final Iterator<WorldEntry> iterator = AbsoluteTime.instance.worlds.values().iterator(); iterator.hasNext(); ) {
 			final WorldEntry entry = iterator.next();
 			final World world = entry.getWorld();
 
@@ -26,15 +23,28 @@ public class CheckRunnable implements Runnable {
 			if (world != null) {
 				final long previousTime = entry.time.longValue();
 				final long expectedTime = previousTime + 5L*20L;
-				final long currentTime = world.getFullTime();
 
-				if ((task != null && currentTime != expectedTime) || currentTime > expectedTime) {
-					if (currentTime == previousTime) {
-						break world;
-					} else {
-						plugin.getLogger().info("New time for " + world.getName() + ": " + Long.toString(currentTime) + ".");
+				long currentTime = world.getFullTime();
 
-						plugin.getServer().getPluginManager().callEvent(new WorldChangedTimeEvent(world, previousTime, expectedTime));
+				if (task != null) {
+					if (currentTime < expectedTime) {
+						currentTime = AbsoluteTime.fixTime(world, expectedTime);
+					}
+
+					if (currentTime != expectedTime) {
+						if (currentTime == previousTime) {
+							break world;
+						} else {
+							AbsoluteTime.newTime(world, currentTime, previousTime, expectedTime);
+						}
+					}
+				} else {
+					if (currentTime < previousTime) {
+						currentTime = AbsoluteTime.fixTime(world, previousTime);
+					}
+
+					if (currentTime > expectedTime) {
+						AbsoluteTime.newTime(world, currentTime, previousTime, expectedTime);
 					}
 				}
 
@@ -59,5 +69,14 @@ public class CheckRunnable implements Runnable {
 		task = plugin.getServer().getScheduler().runTaskTimer(plugin, this, 5L*20L, 5L*20L);
 
 		return task;
+	}
+
+	public void cancel() {
+		if (task != null) {
+			task.cancel();
+			task = null;
+
+			run();
+		}
 	}
 }

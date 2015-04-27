@@ -1,7 +1,9 @@
 package net.moltendorf.Bukkit.AbsoluteTime;
 
+import net.moltendorf.Bukkit.AbsoluteTime.event.WorldChangedTimeEvent;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -50,12 +52,45 @@ public class AbsoluteTime extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		instance = null;
+		checkRunnable.cancel();
 
-		getConfig().set("ticks", ++ticks);
+		final FileConfiguration config = getConfig();
+
+		config.set("ticks", ++ticks);
+
+		for (final WorldEntry entry : worlds.values()) {
+			final World world = entry.getWorld();
+
+			config.set("worlds." + world.getName(), world.getFullTime());
+		}
+
 		saveConfig();
 
 		getLogger().info("Saved tick count to config: " + ticks + ".");
+
+		instance = null;
+	}
+
+	protected static long fixTime(final World world, final long expectedTime) {
+		final long expectedDay  = expectedTime/24000*24000;
+		final long relativeTime = expectedTime - expectedDay;
+
+		long currentTime = world.getTime();
+
+		if (currentTime < relativeTime) {
+			currentTime = expectedDay + 24000 + currentTime;
+		} else {
+			currentTime = expectedDay + currentTime;
+		}
+
+		world.setFullTime(currentTime);
+
+		return currentTime;
+	}
+
+	protected static void newTime(final World world, final long currentTime, final long previousTime, final long expectedTime) {
+		instance.getLogger().info("New time for " + world.getName() + ": " + Long.toString(currentTime) + ".");
+		instance.getServer().getPluginManager().callEvent(new WorldChangedTimeEvent(world, previousTime, expectedTime));
 	}
 
 	/**
