@@ -32,7 +32,7 @@ public class CheckRunnable implements Runnable {
 					if (currentTime == previousTime) {
 						break world;
 					} else {
-						plugin.getLogger().info("New time for " + world.getName() + ":      " + Long.toString(currentTime) + ".");
+						plugin.getLogger().info("New time for " + world.getName() + ": " + Long.toString(currentTime) + ".");
 
 						plugin.getServer().getPluginManager().callEvent(new WorldChangedTimeEvent(world, previousTime, expectedTime));
 					}
