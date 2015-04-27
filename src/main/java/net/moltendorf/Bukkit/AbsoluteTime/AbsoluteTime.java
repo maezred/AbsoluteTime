@@ -32,8 +32,9 @@ public class AbsoluteTime extends JavaPlugin {
 		final BukkitScheduler scheduler = server.getScheduler();
 
 		ticks = getConfig().getLong("ticks");
+		scheduler.runTaskTimer(this, () -> ++ticks, 1L, 1L);
+
 		getLogger().info("Resuming from tick: " + Long.toString(ticks) + ".");
-		server.getScheduler().runTaskTimer(this, () -> ++ticks, 1L, 1L);
 
 		for (final World world : getServer().getWorlds()) {
 			worlds.put(world.getUID(), new WorldEntry(world));
