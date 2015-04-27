@@ -18,7 +18,7 @@ public class WorldEntry {
 	private final WeakReference<World> worldReference;
 
 	public WorldEntry(final World world) {
-		time = new MutableLong(world.getFullTime() - 1L);
+		time = new MutableLong(world.getFullTime());
 
 		worldId = world.getUID();
 		worldReference = new WeakReference<>(world);

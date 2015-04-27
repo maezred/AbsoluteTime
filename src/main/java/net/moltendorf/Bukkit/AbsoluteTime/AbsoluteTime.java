@@ -3,6 +3,7 @@ package net.moltendorf.Bukkit.AbsoluteTime;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,7 +28,8 @@ public class AbsoluteTime extends JavaPlugin {
 
 		saveDefaultConfig();
 
-		final Server server = getServer();
+		final Server          server    = getServer();
+		final BukkitScheduler scheduler = server.getScheduler();
 
 		ticks = getConfig().getLong("ticks");
 		getLogger().info("Resuming from tick: " + Long.toString(ticks) + ".");
@@ -38,9 +40,11 @@ public class AbsoluteTime extends JavaPlugin {
 		}
 
 		checkRunnable = new CheckRunnable();
-		checkRunnable.schedule();
 
-		server.getPluginManager().registerEvents(new Listeners(), this);
+		scheduler.runTask(this, () -> {
+			checkRunnable.schedule();
+			server.getPluginManager().registerEvents(new Listeners(), this);
+		});
 	}
 
 	@Override
