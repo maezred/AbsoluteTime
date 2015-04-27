@@ -1,0 +1,6 @@
+name: AbsoluteTime
+version: 1.0.0
+description: Tick counter. Useful if you need a consistent tick counter.
+author: moltendorf
+website: http://dev.bukkit.org/server-mods/moltendorf-absolutetime/
+main: net.moltendorf.Bukkit.AbsoluteTime.AbsoluteTime
