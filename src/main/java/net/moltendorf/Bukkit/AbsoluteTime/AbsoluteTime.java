@@ -17,7 +17,13 @@ import java.util.UUID;
  * @author moltendorf
  */
 public class AbsoluteTime extends JavaPlugin {
-	protected static AbsoluteTime instance;
+
+	// Main instance.
+	private static AbsoluteTime instance;
+
+	protected static AbsoluteTime getInstance() {
+		return instance;
+	}
 
 	protected final Map<UUID, WorldEntry> worlds = new LinkedHashMap<>();
 	protected CheckRunnable checkRunnable;

@@ -14,13 +14,13 @@ public class Listeners implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void PlayerBedLeaveEventMonitor(final PlayerBedLeaveEvent event) {
-		final AbsoluteTime plugin = AbsoluteTime.instance;
+		final AbsoluteTime instance = AbsoluteTime.getInstance();
 		final World        world  = event.getBed().getWorld();
 		final long         time   = world.getFullTime();
 
-		plugin.getServer().getScheduler().runTask(plugin, () -> {
+		instance.getServer().getScheduler().runTask(instance, () -> {
 			if (time != world.getFullTime()) {
-				plugin.checkRunnable.schedule();
+				instance.checkRunnable.schedule();
 			}
 		});
 	}

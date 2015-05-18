@@ -15,7 +15,8 @@ public class CheckRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		for (final Iterator<WorldEntry> iterator = AbsoluteTime.instance.worlds.values().iterator(); iterator.hasNext(); ) {
+		final AbsoluteTime      instance = AbsoluteTime.getInstance();
+		for (final Iterator<WorldEntry> iterator = instance.worlds.values().iterator(); iterator.hasNext(); ) {
 			final WorldEntry entry = iterator.next();
 			final World world = entry.getWorld();
 
@@ -65,8 +66,7 @@ public class CheckRunnable implements Runnable {
 			run();
 		}
 
-		final AbsoluteTime plugin = AbsoluteTime.instance;
-		task = plugin.getServer().getScheduler().runTaskTimer(plugin, this, 5L*20L, 5L*20L);
+		task = AbsoluteTime.getInstance().getServer().getScheduler().runTaskTimer(AbsoluteTime.getInstance(), this, 5L*20L, 5L*20L);
 
 		return task;
 	}
