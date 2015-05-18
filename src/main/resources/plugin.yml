@@ -1,5 +1,5 @@
 name: AbsoluteTime
-version: 1.4.6
+version: 1.4.8
 description: Tick counter. Useful if you need a consistent tick counter.
 author: moltendorf
 website: http://dev.bukkit.org/server-mods/moltendorf-absolutetime/
