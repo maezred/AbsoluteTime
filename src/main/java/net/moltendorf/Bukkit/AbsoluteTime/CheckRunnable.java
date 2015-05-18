@@ -27,16 +27,16 @@ public class CheckRunnable implements Runnable {
 				long currentTime = world.getFullTime();
 
 				if (task != null) {
+					if (currentTime == previousTime && world.getGameRuleValue("doDaylightCycle").equals("false")) {
+						break world;
+					}
+
 					if (currentTime < expectedTime) {
 						currentTime = AbsoluteTime.fixTime(world, expectedTime);
 					}
 
 					if (currentTime != expectedTime) {
-						if (currentTime == previousTime) {
-							break world;
-						} else {
-							AbsoluteTime.newTime(world, currentTime, previousTime, expectedTime);
-						}
+						AbsoluteTime.newTime(world, currentTime, previousTime, expectedTime);
 					}
 				} else {
 					if (currentTime < previousTime) {
