@@ -4,7 +4,6 @@ import org.apache.commons.lang.mutable.MutableLong;
 import org.bukkit.World;
 
 import java.lang.ref.WeakReference;
-import java.util.UUID;
 
 /**
  * Created by moltendorf on 15/04/26.
@@ -12,31 +11,26 @@ import java.util.UUID;
  * @author moltendorf
  */
 public class WorldEntry {
+	public final String name;
 	public final MutableLong time;
 
-	private final UUID                 worldId;
 	private final WeakReference<World> worldReference;
 
 	public WorldEntry(final World world) {
+		name = world.getName();
+
 		final long currentTime = world.getFullTime();
 
-		time = new MutableLong(AbsoluteTime.instance.getConfig().getLong("worlds." + world.getName(), currentTime));
+		time = new MutableLong(AbsoluteTime.getInstance().getConfig().getLong("worlds." + name, currentTime));
 
 		if (time.longValue() < currentTime) {
 			time.setValue(currentTime);
 		}
 
-		worldId = world.getUID();
 		worldReference = new WeakReference<>(world);
 	}
 
 	public World getWorld() {
-		final World world = worldReference.get();
-
-		if (world == null) {
-			return AbsoluteTime.instance.getServer().getWorld(worldId);
-		}
-
-		return world;
+		return worldReference.get();
 	}
 }

@@ -67,7 +67,15 @@ public class AbsoluteTime extends JavaPlugin {
 		for (final WorldEntry entry : worlds.values()) {
 			final World world = entry.getWorld();
 
-			config.set("worlds." + world.getName(), world.getFullTime());
+			final long time;
+
+			if (world != null) {
+				time = world.getFullTime();
+			} else {
+				time = entry.time.longValue();
+			}
+
+			config.set("worlds." + entry.name, time);
 		}
 
 		saveConfig();
