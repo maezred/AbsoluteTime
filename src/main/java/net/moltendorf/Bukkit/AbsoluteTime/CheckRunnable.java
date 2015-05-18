@@ -1,6 +1,7 @@
 package net.moltendorf.Bukkit.AbsoluteTime;
 
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Iterator;
@@ -16,13 +17,15 @@ public class CheckRunnable implements Runnable {
 	@Override
 	public void run() {
 		final AbsoluteTime      instance = AbsoluteTime.getInstance();
+		final FileConfiguration config   = instance.getConfig();
+
 		for (final Iterator<WorldEntry> iterator = instance.worlds.values().iterator(); iterator.hasNext(); ) {
 			final WorldEntry entry = iterator.next();
 			final World world = entry.getWorld();
+			final long previousTime = entry.time.longValue();
 
 		world:
 			if (world != null) {
-				final long previousTime = entry.time.longValue();
 				final long expectedTime = previousTime + 5L*20L;
 
 				long currentTime = world.getFullTime();
@@ -54,6 +57,7 @@ public class CheckRunnable implements Runnable {
 				continue;
 			}
 
+			config.set("worlds." + entry.name, previousTime);
 			iterator.remove();
 		}
 	}
