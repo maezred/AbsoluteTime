@@ -49,14 +49,16 @@ public class Listeners implements Listener {
 	public void ServerCommandEventHandler(final ServerCommandEvent event) {
 		final String command = event.getCommand();
 
-		CommandEventHandler(command);
+		if (command.length() >= 29) {
+			CommandEventHandler(command);
+		}
 	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void PlayerCommandPreprocessEventHandler(final PlayerCommandPreprocessEvent event) {
 		final String command = event.getMessage();
 
-		if (command.startsWith("/")) {
+		if (command.length() >= 30 && command.startsWith("/")) {
 			CommandEventHandler(command.substring(1));
 		}
 	}
