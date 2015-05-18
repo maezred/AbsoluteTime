@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
 import java.util.Map;
@@ -29,10 +30,7 @@ public class Listeners implements Listener {
 		});
 	}
 
-	@EventHandler(ignoreCancelled = true)
-	public void ServerCommandEventHandler(final ServerCommandEvent event) {
-		final String command = event.getCommand();
-
+	public void CommandEventHandler(final String command) {
 		if (command.substring(0, 8).equalsIgnoreCase("gamerule") && command.substring(8).startsWith(" doDaylightCycle true")) {
 			final AbsoluteTime instance = AbsoluteTime.getInstance();
 
@@ -44,6 +42,22 @@ public class Listeners implements Listener {
 					worlds.put(id, new WorldEntry(world, false));
 				}
 			}
+		}
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void ServerCommandEventHandler(final ServerCommandEvent event) {
+		final String command = event.getCommand();
+
+		CommandEventHandler(command);
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void PlayerCommandPreprocessEventHandler(final PlayerCommandPreprocessEvent event) {
+		final String command = event.getMessage();
+
+		if (command.startsWith("/")) {
+			CommandEventHandler(command.substring(1));
 		}
 	}
 }
