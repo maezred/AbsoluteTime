@@ -41,7 +41,7 @@ public class Listeners implements Listener {
 				final Map<UUID, WorldEntry> worlds = instance.worlds;
 
 				if (!worlds.containsKey(id)) {
-					worlds.put(id, new WorldEntry(world));
+					worlds.put(id, new WorldEntry(world, false));
 				}
 			}
 		}

@@ -17,14 +17,22 @@ public class WorldEntry {
 	private final WeakReference<World> worldReference;
 
 	public WorldEntry(final World world) {
+		this(world, true);
+	}
+
+	public WorldEntry(final World world, final boolean current) {
 		name = world.getName();
 
 		final long currentTime = world.getFullTime();
 
-		time = new MutableLong(AbsoluteTime.getInstance().getConfig().getLong("worlds." + name, currentTime));
+		if (current) {
+			time = new MutableLong(AbsoluteTime.getInstance().getConfig().getLong("worlds." + name, currentTime));
 
-		if (time.longValue() < currentTime) {
-			time.setValue(currentTime);
+			if (time.longValue() < currentTime) {
+				time.setValue(currentTime);
+			}
+		} else {
+			time = new MutableLong(0);
 		}
 
 		worldReference = new WeakReference<>(world);

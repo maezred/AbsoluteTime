@@ -22,7 +22,8 @@ public class CheckRunnable implements Runnable {
 		for (final Iterator<WorldEntry> iterator = instance.worlds.values().iterator(); iterator.hasNext(); ) {
 			final WorldEntry entry = iterator.next();
 			final World world = entry.getWorld();
-			final long previousTime = entry.time.longValue();
+
+			long previousTime = entry.time.longValue();
 
 		world:
 			if (world != null) {
@@ -30,19 +31,29 @@ public class CheckRunnable implements Runnable {
 
 				long currentTime = world.getFullTime();
 
-				if (task != null) {
+				if (task != null && previousTime != 0) {
 					if (currentTime == previousTime && world.getGameRuleValue("doDaylightCycle").equals("false")) {
 						break world;
 					}
 
 					if (currentTime < expectedTime) {
-						currentTime = AbsoluteTime.fixTime(world, expectedTime);
+						if (world.getGameRuleValue("doDaylightCycle").equals("true")) {
+							currentTime = AbsoluteTime.fixTime(world, expectedTime);
+						} else {
+							previousTime = currentTime;
+
+							break world;
+						}
 					}
 
 					if (currentTime != expectedTime) {
 						AbsoluteTime.newTime(world, currentTime, previousTime, expectedTime);
 					}
 				} else {
+					if (previousTime == 0) {
+						previousTime = AbsoluteTime.getInstance().getConfig().getLong("worlds." + entry.name, currentTime);
+					}
+
 					if (currentTime < previousTime) {
 						currentTime = AbsoluteTime.fixTime(world, previousTime);
 					}
