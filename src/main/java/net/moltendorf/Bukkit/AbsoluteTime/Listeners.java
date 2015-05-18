@@ -4,6 +4,10 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.server.ServerCommandEvent;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by moltendorf on 15/04/26.
@@ -23,5 +27,23 @@ public class Listeners implements Listener {
 				instance.checkRunnable.schedule();
 			}
 		});
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void ServerCommandEventHandler(final ServerCommandEvent event) {
+		final String command = event.getCommand();
+
+		if (command.substring(0, 8).equalsIgnoreCase("gamerule") && command.substring(8).startsWith(" doDaylightCycle true")) {
+			final AbsoluteTime instance = AbsoluteTime.getInstance();
+
+			for (final World world : instance.getServer().getWorlds()) {
+				final UUID id = world.getUID();
+				final Map<UUID, WorldEntry> worlds = instance.worlds;
+
+				if (!worlds.containsKey(id)) {
+					worlds.put(id, new WorldEntry(world));
+				}
+			}
+		}
 	}
 }
