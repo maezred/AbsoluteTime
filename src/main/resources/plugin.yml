@@ -1,6 +1,5 @@
-name: AbsoluteTime
-version: 1.4.10
-description: Tick counter. Useful if you need a consistent tick counter.
+name: ${name}
+main: ${groupId}.${artifactId}.${artifactId}
+version: ${version}-${maven.build.timestamp}
+description: ${description}
 author: moltendorf
-website: http://dev.bukkit.org/server-mods/moltendorf-absolutetime/
-main: net.moltendorf.Bukkit.AbsoluteTime.AbsoluteTime
